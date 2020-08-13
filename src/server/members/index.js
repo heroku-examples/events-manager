@@ -1,20 +1,32 @@
+'use strict';
+
 const { Router } = require('express');
+const membersService = require('../db/members');
+
 const router = new Router();
 
 router.get('/', async (req, res) => {
-    res.send('members');
+    const result = await membersService.listMembers();
+    res.json(result);
 });
 
-router.post('/', (req, res) => {
-    res.send('new member');
+router.post('/', async (req, res) => {
+    const { name, email } = req.body;
+    const result = await membersService.createMember({ name, email });
+    res.json(result);
 });
 
-router.delete('/:id', (req, res) => {
-    res.send('delete member');
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    await membersService.deleteMember(id);
+    res.json({ message: 'member deleted' });
 });
 
-router.put('/:id', (req, res) => {
-    res.send('update member');
+router.put('/:id', async (req, res) => {
+    const id = req.params.id;
+    const { name, email } = req.body;
+    const result = await membersService.updateMember({ id, name, email });
+    res.json(result);
 });
 
 module.exports = router;

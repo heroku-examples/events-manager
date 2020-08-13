@@ -1,14 +1,16 @@
 {
     "name": "events-manager",
-    "description": "My amazing LWC app",
+    "description": "Events Manager API",
     "version": "0.0.1",
     "author": "Julian Duque",
     "bugs": "https://github.com/heroku-examples/events-manager/issues",
     "dependencies": {
+        "body-parser": "^1.19.0",
         "compression": "^1.7.4",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
-        "helmet": "^4.0.0"
+        "helmet": "^4.0.0",
+        "pg": "^8.3.0"
     },
     "devDependencies": {
         "eslint": "^7.6.0",
@@ -16,7 +18,8 @@
         "lint-staged": "^10.2.11",
         "lwc-services": "^2.1.4",
         "npm-run-all": "^4.1.5",
-        "prettier": "^2.0.5"
+        "prettier": "^2.0.5",
+        "standard": "^14.3.4"
     },
     "engines": {
         "node": ">=10.13.0",
@@ -56,7 +59,8 @@
     "scripts": {
         "build": "lwc-services build -m production",
         "build:development": "lwc-services build",
-        "lint": "eslint ./src/**/*.js",
+        "lint": "eslint ./src/**/*.js && npm run lint:node",
+        "lint:node": "standard --fix ./src/server/**/*.js",
         "prettier": "prettier --write \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "prettier:verify": "prettier --list-different \"**/*.{css,html,js,json,md,ts,yaml,yml}\"",
         "serve": "node src/server/api.js",

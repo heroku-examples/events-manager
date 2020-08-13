@@ -1,0 +1,217 @@
+{
+    "info": {
+        "_postman_id": "4e846e08-6e8a-4ed7-afa4-d12858d5e654",
+        "name": "Events Manager",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Events",
+            "item": [
+                {
+                    "name": "List Events",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3002/api/events",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "List Rsvps",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3002/api/events/1/rsvps",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events", "1", "rsvps"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Event",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"A new event\",\n    \"description\": \"Let's organize a new event and celebrate\",\n    \"date\": \"2020-08-23\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:3002/api/events",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Save Rsvp",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"Maybe\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:3002/api/events/2/rsvps/1",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events", "2", "rsvps", "1"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Event",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"A better name\",\n    \"description\": \"A better desc\",\n    \"date\": \"2020-08-22\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:3002/api/events/3",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events", "3"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Event",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3002/api/events/4",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "events", "4"]
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "protocolProfileBehavior": {}
+        },
+        {
+            "name": "Members",
+            "item": [
+                {
+                    "name": "List Members",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3002/api/members",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "members"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Member",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Alejandra G.\",\n    \"email\": \"ag@ngmeetup.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:3002/api/members",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "members"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Member",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"A. G\",\n    \"email\": \"a@g.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "http://localhost:3002/api/members/3",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "members", "3"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Member",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3002/api/members/3",
+                            "protocol": "http",
+                            "host": ["localhost"],
+                            "port": "3002",
+                            "path": ["api", "members", "3"]
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "protocolProfileBehavior": {}
+        }
+    ],
+    "protocolProfileBehavior": {}
+}

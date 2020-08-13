@@ -1,7 +1,10 @@
+'use strict';
+
 require('dotenv').config();
 
 const compression = require('compression');
 const helmet = require('helmet');
+const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
 
@@ -13,6 +16,7 @@ const INDEX = path.join(DIST, 'index.html');
 const app = express();
 app.use(helmet());
 app.use(compression());
+app.use(bodyParser.json());
 app.use(express.static(DIST));
 
 app.use('/api/members', require('./members'));

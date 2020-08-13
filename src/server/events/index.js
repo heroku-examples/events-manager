@@ -1,29 +1,57 @@
+'use strict';
+
 const { Router } = require('express');
+const eventsService = require('../db/events');
 
 const router = new Router();
 
 router.get('/', async (req, res) => {
-    res.send('events');
+    const result = await eventsService.listEvents();
+    res.json(result);
 });
 
-router.post('/', (req, res) => {
-    res.send('new event');
+// Create Event
+router.post('/', async (req, res) => {
+    const { name, description, date } = req.body;
+    const result = await eventsService.createEvent({ name, description, date });
+    res.json(result);
 });
 
-router.delete('/:id', (req, res) => {
-    res.send('delete event');
+// Delete Event
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    await eventsService.deleteEvent(id);
+    res.json({ message: 'event deleted' });
 });
 
-router.put('/:id', (req, res) => {
-    res.send('update event');
+// Update Event
+router.put('/:id', async (req, res) => {
+    const id = req.params.id;
+    const { name, description, date } = req.body;
+    const result = await eventsService.updateEvent({
+        id,
+        name,
+        description,
+        date
+    });
+    res.json(result);
 });
 
-router.get('/:id/rsvps', (req, res) => {
-    res.send('rsvp list for event');
+router.get('/:id/rsvps', async (req, res) => {
+    const id = req.params.id;
+    const result = await eventsService.listRsvps(id);
+    res.json(result);
 });
 
-router.post('/:id/rsvps/:memberId', (req, res) => {
-    res.send('rsvp for member');
+router.post('/:id/rsvps/:memberId', async (req, res) => {
+    const { id: eventId, memberId } = req.params;
+    const { status } = req.body;
+    const result = await eventsService.createRsvp({
+        eventId,
+        memberId,
+        status
+    });
+    res.json(result);
 });
 
 module.exports = router;

@@ -1,14 +1,16 @@
 'use strict';
 
-const { Pool } = require('pg');
+const { parse } = require('pg-connection-string');
 
-const db = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+const db = require('knex')({
+    client: 'pg',
+    connection: {
+        ...parse(process.env.DATABASE_URL),
+        ssl: {
+            rejectUnauthorized: false
+        }
+    },
+    pool: { min: 0, max: 8 }
 });
 
-module.exports = {
-    query: (text, params) => db.query(text, params)
-};
+module.exports = db;

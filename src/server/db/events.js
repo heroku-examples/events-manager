@@ -1,71 +1,60 @@
 'use strict';
 
-const { query } = require('./index');
+const db = require('./index');
 
 async function listEvents() {
-    const text = 'SELECT * FROM events';
-    const result = await query(text);
-    return result && result.rows;
+    return db.select('*').from('events');
 }
 
 async function createEvent({ name, description, date }) {
-    const text =
-        'INSERT INTO events (name, description, date) VALUES ($1, $2, $3) RETURNING *';
-    const result = await query(text, [name, description, date]);
-    return result && result.rows && result.rows[0];
+    const [result] = await db('events')
+        .insert({ name, description, date })
+        .returning('*');
+    return result;
 }
 
 async function deleteEvent(id) {
-    const text = 'DELETE FROM events WHERE id = $1';
-    return query(text, [id]);
+    return db('events').where('id', id).delete();
 }
 
 async function updateEvent({ id, name, description, date }) {
     if (!id) throw new Error('id is required');
 
-    let text = 'UPDATE events SET id = id';
-    const params = [id];
-
-    if (name) {
-        params.push(name);
-        text += `, name = $${params.length}`;
-    }
-
-    if (description) {
-        params.push(description);
-        text += `, description = $${params.length}`;
-    }
-
-    if (date) {
-        params.push(date);
-        text += `, date = $${params.length}`;
-    }
-
-    text += 'WHERE id = $1 RETURNING *';
-    const result = await query(text, params);
-    return result && result.rows && result.rows[0];
+    const [result] = await db('events')
+        .where('id', id)
+        .update({ name, description, date })
+        .returning('*');
+    return result;
 }
 
 async function createRsvp({ eventId, memberId, status }) {
     const text = `
-  INSERT INTO rsvps (event_id, member_id, status) VALUES ($1, $2, $3)
+  ?
   ON CONFLICT (event_id, member_id) DO
   UPDATE SET status = EXCLUDED.status
   RETURNING *
   `;
-    const result = await query(text, [eventId, memberId, status]);
+    const result = await db.raw(text, [
+        db('rsvps').insert({ event_id: eventId, member_id: memberId, status })
+    ]);
     return result && result.rows && result.rows[0];
 }
 
 async function listRsvps(eventId) {
-    const text = `
-  SELECT e.id AS event_id, e.name AS event_name, m.name, m.email, r.status FROM rsvps r
-  INNER JOIN events e ON e.id = r.event_id
-  INNER JOIN members m ON m.id = r.member_id
-  WHERE e.id = $1
-  `;
-    const result = await query(text, [eventId]);
-    return result && result.rows;
+    const result = await db
+        .select(
+            'events.id as event_id',
+            'events.name as event_name',
+            'members.name as name',
+            'members.email as email',
+            'rsvps.status as status'
+        )
+        .from('rsvps')
+        .innerJoin('events', 'events.id', 'rsvps.event_id')
+        .innerJoin('members', 'members.id', 'rsvps.member_id')
+        .where('events.id', eventId);
+
+    return result;
 }
 
 module.exports = {

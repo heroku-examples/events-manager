@@ -11,6 +11,7 @@
         {
             "files": [
                 "src/server/**",
+                "scripts/**",
                 "jest.config.js",
                 "lwc-services.config.js"
             ],

@@ -1,60 +1,65 @@
 'use strict';
 
-const db = require('./index');
+const { Event, Rsvp, Member } = require('../models');
 
 async function listEvents() {
-    return db.select('*').from('events');
+    return Event.findAll({ raw: true });
 }
 
 async function createEvent({ name, description, date }) {
-    const [result] = await db('events')
-        .insert({ name, description, date })
-        .returning('*');
-    return result;
+    const event = await Event.create({ name, description, date });
+    if (!event) return null;
+
+    return event.toJSON();
 }
 
 async function deleteEvent(id) {
-    return db('events').where('id', id).delete();
+    return Event.destroy({ where: { id } });
 }
 
 async function updateEvent({ id, name, description, date }) {
     if (!id) throw new Error('id is required');
 
-    const [result] = await db('events')
-        .where('id', id)
-        .update({ name, description, date })
-        .returning('*');
-    return result;
+    const event = await Event.findByPk(id);
+
+    if (!event) return null;
+
+    event.name = name;
+    event.description = description;
+    event.date = date;
+    return event.save();
 }
 
 async function createRsvp({ eventId, memberId, status }) {
-    const text = `
-  ?
-  ON CONFLICT (event_id, member_id) DO
-  UPDATE SET status = EXCLUDED.status
-  RETURNING *
-  `;
-    const result = await db.raw(text, [
-        db('rsvps').insert({ event_id: eventId, member_id: memberId, status })
-    ]);
-    return result && result.rows && result.rows[0];
+    const rsvp = await Rsvp.findOne({ where: { eventId, memberId } });
+    if (rsvp) {
+        rsvp.status = status;
+        rsvp.save();
+        return rsvp;
+    }
+
+    return Rsvp.create({ eventId, memberId, status });
 }
 
 async function listRsvps(eventId) {
-    const result = await db
-        .select(
-            'events.id as event_id',
-            'events.name as event_name',
-            'members.name as name',
-            'members.email as email',
-            'rsvps.status as status'
-        )
-        .from('rsvps')
-        .innerJoin('events', 'events.id', 'rsvps.event_id')
-        .innerJoin('members', 'members.id', 'rsvps.member_id')
-        .where('events.id', eventId);
+    const rsvps = await Event.findByPk(eventId, {
+        attributes: ['id', 'name', 'description', 'date'],
+        include: [
+            {
+                model: Member,
+                as: 'members',
+                attributes: ['name', 'email'],
+                through: {
+                    as: 'rsvp',
+                    attributes: ['status']
+                }
+            }
+        ]
+    });
 
-    return result;
+    if (!rsvps) return [];
+
+    return rsvps.toJSON();
 }
 
 module.exports = {

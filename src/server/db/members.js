@@ -1,27 +1,32 @@
 'use strict';
 
-const db = require('./index');
+const { Member } = require('../models');
 
 async function listMembers() {
-    return db.select('*').from('members');
+    return Member.findAll({ raw: true });
 }
 
 async function createMember({ name, email }) {
-    const [result] = await db('members').insert({ name, email }).returning('*');
-    return result;
+    const member = await Member.create({ name, email });
+    if (!member) return null;
+
+    return member.toJSON();
 }
 
 async function deleteMember(id) {
-    return db('members').where('id', id).delete();
+    return Member.destroy({ where: { id } });
 }
 
 async function updateMember({ id, name, email }) {
     if (!id) throw new Error('id is required');
-    const [result] = await db('members')
-        .where('id', id)
-        .update({ name, email })
-        .returning('*');
-    return result;
+
+    const member = await Member.findByPk(id);
+
+    if (!member) return null;
+
+    member.name = name;
+    member.email = email;
+    return member.save();
 }
 
 module.exports = {

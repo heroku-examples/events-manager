@@ -19,7 +19,9 @@ heroku addons:create heroku-postgresql:hobby-dev -a app-name
 3. Load Database Schema
 
 ```
-heroku pg:psql -a app-name < scripts/events-manager.sql
+export DATABASE_URL="...."
+cd src/server
+npx sequelize db:migrate
 ```
 
 In case you need to reset your database you can run:

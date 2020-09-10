@@ -1,6 +1,10 @@
 'use strict';
 
 const { Event, Rsvp, Member } = require('../models');
+const Redis = require('ioredis');
+
+const cache = new Redis(process.env.REDIS_URL);
+const pub = new Redis(process.env.REDIS_URL);
 
 async function listEvents() {
     return Event.findAll({ raw: true });
@@ -9,6 +13,8 @@ async function listEvents() {
 async function createEvent({ name, description, date }) {
     const event = await Event.create({ name, description, date });
     if (!event) return null;
+
+    pub.publish('events', 'A new event has been created with id ' + event.id);
 
     return event.toJSON();
 }
@@ -42,7 +48,21 @@ async function createRsvp({ eventId, memberId, status }) {
 }
 
 async function listRsvps(eventId) {
-    const rsvps = await Event.findByPk(eventId, {
+    const key = `events:${eventId}`;
+    const cached = await cache.get(key);
+    let rsvps;
+
+    if (cached) {
+        try {
+            console.log('Cache hit');
+            rsvps = JSON.parse(cached);
+            return rsvps;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    rsvps = await Event.findByPk(eventId, {
         attributes: ['id', 'name', 'description', 'date'],
         include: [
             {
@@ -58,6 +78,9 @@ async function listRsvps(eventId) {
     });
 
     if (!rsvps) return [];
+
+    await cache.set(key, JSON.stringify(rsvps), 'EX', 3 * 60);
+    console.log('Cache miss');
 
     return rsvps.toJSON();
 }

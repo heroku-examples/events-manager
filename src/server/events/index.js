@@ -1,9 +1,9 @@
 'use strict';
 
-const { Router } = require('express');
+const Router = require('express-promise-router');
 const eventsService = require('../db/events');
 
-const router = new Router();
+const router = Router();
 
 router.get('/', async (req, res) => {
     const result = await eventsService.listEvents();

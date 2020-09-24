@@ -5,10 +5,12 @@
     "author": "Julian Duque",
     "bugs": "https://github.com/heroku-examples/events-manager/issues",
     "dependencies": {
+        "@lwc/synthetic-shadow": "^1.8.2",
         "body-parser": "^1.19.0",
         "compression": "^1.7.4",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "express-promise-router": "^4.0.1",
         "helmet": "^4.0.0",
         "ioredis": "^4.17.3",
         "pg": "^8.3.0",
